@@ -1,3 +1,5 @@
+// client webpack config
+
 module.exports = {
   context: __dirname,
   entry: './frontend/entry.jsx',
