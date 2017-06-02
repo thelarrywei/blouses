@@ -18,7 +18,7 @@ const whenIsTheGame = sendSMS => {
 
   const startInterval = setInterval(() => {
     sendSMS(count);
-    if (count >= 9) {
+    if (count >= games.length) {
       clearInterval(startInterval);
     };
     count += 1;
@@ -36,7 +36,7 @@ const sendWeeklySMS = (week) => {
 
   members.forEach(({ name, phoneNumber }) => {
     console.log(name, phoneNumber);
-    SMSBody = `Hey ${name}, ${gameText}`;
+    SMSBody = `Hey ${name}, ${gameText}. -Blouses Bot`;
     client.messages.create({
       body: SMSBody,
       to: phoneNumber,
