@@ -2,6 +2,7 @@ const twilio = require('twilio');
 
 const app = require('./app');
 const whenIsTheGame = require('./util/utils');
+// TODO: v2 api should allow for creating users and games, meaning no seed data import just query db
 const { games, members } = require('./seed');
 const { accountSid, authToken, fromNumber } = require('./twilio_config');
 
