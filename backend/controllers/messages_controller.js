@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 router.use(bodyParser.urlencoded({ extended: true }));
-const User = require('../models/user');
+const Message = require('../models/message');
 module.exports = router;
 
-router.get('/', (req, res) => {
+router.post('/', (req, res) => {
   // NB: creating an API will be v2 so information can be modified via Postman
-  res.status(200).send('hello world')
 });
