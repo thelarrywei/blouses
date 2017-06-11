@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "webpack": "webpack --watch",
-    "dev": "webpack-dev-server --inline --hot",
-    "start": "node -r dotenv/config --inspect ./backend/server.js",
+    "start": "node ./backend/server.js",
+    "dev": "node -r dotenv/config --inspect ./backend/server.js",
     "lint": "./node_modules/.bin/eslint frontend/"
   },
   "repository": {
