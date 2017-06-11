@@ -1,7 +1,7 @@
+const twilio = require('twilio');
 const twilioConfig = {};
 
-twilioConfig.accountSid = process.env.TWILIO_SID;
-twilioConfig.authToken = process.env.TWILIO_TOKEN;
-twilioConfig.fromNumber = process.env.TWILIO_NUMBER;
+twilioConfig.twilioNumber = process.env.TWILIO_NUMBER;
+twilioConfig.client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
 module.exports = twilioConfig;

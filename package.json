@@ -6,7 +6,7 @@
   "scripts": {
     "webpack": "webpack --watch",
     "dev": "webpack-dev-server --inline --hot",
-    "start": "node -r dotenv/config ./backend/server.js",
+    "start": "node -r dotenv/config --inspect ./backend/server.js",
     "lint": "./node_modules/.bin/eslint frontend/"
   },
   "repository": {

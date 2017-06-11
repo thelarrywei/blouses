@@ -1,9 +1,6 @@
 const moment = require('moment');
-const twilio = require('twilio');
-const { accountSid, authToken, fromNumber } = require('../twilio_config');
+const { client, twilioNumber } = require('../twilio_config');
 const { games, members } = require('../seed');
-
-const client = new twilio(accountSid, authToken);
 
 const whenIsTheGame = sendSMS => {
   // PROD
@@ -25,7 +22,6 @@ const whenIsTheGame = sendSMS => {
   }, weeklyDelay);
 
   setTimeout(() => { sendSMS(count); startInterval; }, initialDelay);
-
 };
 
 const sendWeeklySMS = (week) => {
@@ -40,12 +36,19 @@ const sendWeeklySMS = (week) => {
     client.messages.create({
       body: SMSBody,
       to: phoneNumber,
-      from: fromNumber
+      from: twilioNumber
     }).then(response => {
       console.log(response);
     });
   });
-
 };
 
-module.exports = { whenIsTheGame, sendWeeklySMS };
+const DEV_SMS = () => {
+  client.messages.create({
+    body: 'it\s working! *cue Anakin in podracer gif*',
+    to: process.env.DEV_NUMBER,
+    from: twilioNumber
+  });
+}
+
+module.exports = { whenIsTheGame, sendWeeklySMS, DEV_SMS };
