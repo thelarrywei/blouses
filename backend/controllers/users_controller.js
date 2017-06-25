@@ -17,7 +17,6 @@ router.post('/', (req, res) => {
   }).then(() => {
     res.status(201).send(user.toJSON());  
   });
-  debugger;
 });
 
 const fail = (err, msg, code) => {
