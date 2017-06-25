@@ -31,7 +31,6 @@ const sendWeeklySMS = (week) => {
   const gameText = game.bye ? 'we have a bye this week' : `this week's game is on ${game.date} at ${game.time} reply IN, OUT, or MAYBE`;
 
   members.forEach(({ name, phoneNumber }) => {
-    console.log(name, phoneNumber);
     SMSBody = `Hey ${name}, ${gameText}. -Blouses Bot`;
     client.messages.create({
       body: SMSBody,
