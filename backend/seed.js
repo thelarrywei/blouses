@@ -1,19 +1,19 @@
-const members = [
+const users = [
   {
     name: 'DEV',
-    phoneNumber: process.env.DEV_NUMBER,
+    phone: process.env.DEV_NUMBER,
   }
 ];
 
 // TODO: game data should be scraped/pulled from the excel spreadsheet
 const games = [
   {
-    date: '6/7',
+    date: '6/21',
     time: '8pm',
     bye: false,
   },
   {
-    date: '6/14',
+    date: '6/28',
     time: '6pm',
     bye: false,
   },
@@ -24,4 +24,4 @@ const games = [
   }
 ]
 
-module.exports = { members, games };
+module.exports = { users, games };

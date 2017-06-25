@@ -7,4 +7,6 @@ const responseMapping = {
   'DEFAULT': 'Sorry I didn\'t understand that, reply with \'HELP\' for more information.',
 };
 
-module.exports = { responseMapping };
+const validStatuses = ['IN', 'OUT', 'MAYBE'];
+
+module.exports = { responseMapping, validStatuses };
