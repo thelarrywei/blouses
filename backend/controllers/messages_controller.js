@@ -41,6 +41,7 @@ router.post('/reply', (req, res) => {
 
   switch (message) {
     case ('ROSTER'):
+      // TODO: this (currentRoster) should be a model method like currentGame
       Game.currentGame((err, currentGame) => {
         if (currentGame.bye) {
           reply = replyText.BYE;
