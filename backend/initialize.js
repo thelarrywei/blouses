@@ -1,7 +1,7 @@
 const { games, users } = require('./seed');
-const Game = require('./models/game');
-const User = require('./models/user');
-const Attendance = require('./models/attendance');
+const { Game } = require('./models/game');
+const { User } = require('./models/user');
+const { AttendanceSchema } = require('./models/attendance');
 const { handleError } = require('./util/error_handler');
 
 const seedApp = () => {
@@ -10,21 +10,19 @@ const seedApp = () => {
       User.remove({}, handleError)
     })
     .then(() => {
-      Attendance.remove({}, handleError);
-    })
-    .then(() => {
-      games.forEach(({ date, time, bye }) => {
+      games.forEach(({ date, time, bye, attendances }) => {
         Game.create({
           date,
           time,
           bye,
+          attendances,
         }, handleError);
       });
 
       users.forEach(({ name, phone }) => {
         User.create({
           name,
-          phone
+          phone,
         }, handleError);
       });
     });
