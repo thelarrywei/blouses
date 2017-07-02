@@ -8,3 +8,5 @@ const server = app.listen(port, () => {
 });
 
 whenIsTheGame(sendWeeklySMS);
+// DEV
+// whenIsTheGame(DEV_SMS);
