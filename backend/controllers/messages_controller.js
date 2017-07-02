@@ -12,10 +12,6 @@ const { Attendance } = require('../models/attendance');
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.post('/', (req, res) => {
-  
-});
-
 router.post('/reply', (req, res) => {
   // TODO: if there is no current game the we're in the offseason, reply as such and skip all below queries
   const { Body, From } = req.body;
