@@ -4,7 +4,7 @@ const handleError = (err) => {
 
 const fail = (res, err, msg, code) => {
   console.log(err);
-  res.status(code).send(msg);
+  return res.status(code).send(msg);
 };
 
 
