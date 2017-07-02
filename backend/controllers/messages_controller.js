@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const moment = require('moment');
+// const moment = require('moment');
 const { client, twilioNumber } = require('../twilio_config');
-const { responseMapping, _replyText, validStatuses } = require('../util/constants');
-const { fail, handleError } = require('../util/error_handler');
+const { responseMapping, replyText } = require('../util/constants');
+const { isValidStatus } = require('../util/utils');
+const { handleError } = require('../util/error_handler');
 
 const { Game } = require('../models/game');
 const { User } = require('../models/user');
@@ -19,13 +20,13 @@ router.post('/reply', (req, res) => {
   let reply;
 
   if (isValidStatus(message)) {
-    User.findOne({ phone: From }, (err, user) => {
-      handleError(err);
-      Game.currentGame((err, currentGame) => {
-        handleError(err);
+    User.findOne({ phone: From }, (userErr, user) => {
+      handleError(userErr);
+      Game.currentGame((gameErr, currentGame) => {
+        handleError(gameErr);
         if (user && currentGame) {
-          let userAttendance = currentGame.attendances[user.id];
-          if (userAttendance) userAttendance.status = message;
+          const currentAttendance = currentGame.attendances[user.id];
+          if (currentAttendance) currentAttendance.status = message;
           else currentGame.attendances[user.id] = new Attendance({ status: message, user });
 
           Game.update(
@@ -39,37 +40,35 @@ router.post('/reply', (req, res) => {
   }
 
   switch (message) {
-    case ("ROSTER"):
+    case ('ROSTER'):
       Game.currentGame((err, currentGame) => {
         if (currentGame.bye) {
-          reply = _replyText['BYE'];
+          reply = replyText.BYE;
         } else {
           const currentRoster = [];
           Object.values(currentGame.attendances).forEach((attendance) => {
             if (attendance.status === 'IN') currentRoster.push(attendance.user.name);
           });
 
-          reply = currentRoster.join('\r\n') || _replyText['EMPTY'];
+          reply = currentRoster.join('\r\n') || replyText.EMPTY;
         }
 
         client.messages.create({
           body: reply,
           to: From,
-          from: twilioNumber
+          from: twilioNumber,
         });
       });
 
       break;
     default:
-      reply = responseMapping[Body.toUpperCase()] || responseMapping['DEFAULT'];
+      reply = responseMapping[Body.toUpperCase()] || responseMapping.DEFAULT;
       client.messages.create({
         body: reply,
         to: From,
-        from: twilioNumber
+        from: twilioNumber,
       });
   }
 });
-
-const isValidStatus = status => validStatuses.includes(status);
 
 module.exports = router;

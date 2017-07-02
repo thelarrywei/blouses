@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+
 const MessageSchema = new mongoose.Schema({
   body: String,
-  toNumber: String
+  toNumber: String,
 });
 
 mongoose.model('Message', MessageSchema);

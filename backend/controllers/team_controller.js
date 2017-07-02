@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => {
-  User.find({}, function(err, users) {
+  User.find({}, (err, users) => {
     if (err) fail(res, err, 'Error on getting all users!', 400);
     res.send(users);
   });
@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  User.remove({}, (err, users) => {
+  User.remove({}, (err) => {
     if (err) fail(res, err, 'Error on destroy!', 400);
     res.send('Entire team was deleted');
   });

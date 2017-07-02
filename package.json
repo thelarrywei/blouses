@@ -7,7 +7,7 @@
     "webpack": "webpack --watch",
     "start": "node ./backend/server.js",
     "dev": "node -r dotenv/config --inspect ./backend/server.js",
-    "lint": "./node_modules/.bin/eslint frontend/"
+    "lint": "./node_modules/.bin/eslint frontend/ && ./node_modules/.bin/eslint backend/"
   },
   "repository": {
     "type": "git",

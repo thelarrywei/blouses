@@ -1,14 +1,15 @@
 const moment = require('moment');
 const { client, twilioNumber } = require('../twilio_config');
-const { games, members } = require('../seed');
+const { games, users: members } = require('../seed');
+const { validStatuses } = require('./constants');
 
-const whenIsTheGame = sendSMS => {
+const whenIsTheGame = (sendSMS) => {
   // PROD
-  const initialDelay = moment().weekday(7).diff(moment());
-  const weeklyDelay = 6.048e+8;
+  // const initialDelay = moment().weekday(7).diff(moment());
+  // const weeklyDelay = 6.048e+8;
   // DEV
-  // const initialDelay = 100;
-  // const weeklyDelay = 100;
+  const initialDelay = 100;
+  const weeklyDelay = 100;
 
   let count = 0;
 
@@ -16,7 +17,8 @@ const whenIsTheGame = sendSMS => {
     sendSMS(count);
     if (count >= games.length) {
       clearInterval(startInterval);
-    };
+    }
+
     count += 1;
   }, weeklyDelay);
 
@@ -34,19 +36,19 @@ const sendWeeklySMS = (week) => {
     client.messages.create({
       body: SMSBody,
       to: phoneNumber,
-      from: twilioNumber
-    }).then(response => {
-      console.log(response);
-    });
+      from: twilioNumber,
+    }).then(response => console.log(response));
   });
 };
 
 const DEV_SMS = () => {
   client.messages.create({
-    body: 'it\s working! *cue Anakin in podracer gif*',
+    body: 'it\'s working! *cue Anakin in podracer gif*',
     to: process.env.DEV_NUMBER,
-    from: twilioNumber
+    from: twilioNumber,
   });
-}
+};
 
-module.exports = { whenIsTheGame, sendWeeklySMS, DEV_SMS };
+const isValidStatus = status => validStatuses.includes(status);
+
+module.exports = { whenIsTheGame, sendWeeklySMS, DEV_SMS, isValidStatus };

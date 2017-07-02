@@ -1,4 +1,4 @@
-const checkAuth = function(req, res, next) {
+const checkAuth = function checkAuth(req, res, next) {
   if (req.path !== '/messages/reply') {
     if (req.headers.api_key !== process.env.API_KEY) return res.send('You are not authorized to perform this action');
   }

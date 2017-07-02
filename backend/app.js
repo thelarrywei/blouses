@@ -10,7 +10,7 @@ const TeamController = require('./controllers/team_controller');
 const app = express();
 
 // NB: only seed for dev
-// seedApp();
+seedApp();
 app.use(bodyParser.json());
 app.use(checkAuth);
 app.use('/users', UsersController);
