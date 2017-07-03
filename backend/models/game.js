@@ -17,7 +17,7 @@ const GameSchema = new Schema({
 }, { minimize: false });
 
 GameSchema.statics.currentGame = function currentGame(cb) {
-  return this.findOne({ date: moment().weekday(3).format('M/D') }, cb);
+  return this.findOne({ date: moment().utcOffset(-7).weekday(3).format('M/D') }, cb);
 };
 
 mongoose.model('Game', GameSchema);

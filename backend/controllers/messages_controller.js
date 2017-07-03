@@ -43,6 +43,7 @@ router.post('/reply', (req, res) => {
     case ('ROSTER'):
       // TODO: this (currentRoster) should be a model method like currentGame
       Game.currentGame((err, currentGame) => {
+        handleError(err);
         if (currentGame.bye) {
           reply = replyText.BYE;
         } else {

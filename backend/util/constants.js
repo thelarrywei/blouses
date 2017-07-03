@@ -9,6 +9,7 @@ const responseMapping = {
 const replyText = {
   BYE: 'We have a bye this week',
   EMPTY: 'Uh oh, nobody\'s playing yet',
+  SIG: '-Blouses Bot',
 };
 
 const validStatuses = ['IN', 'OUT', 'MAYBE'];
