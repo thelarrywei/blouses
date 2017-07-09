@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const moment = require('moment-timezone');
+const moment = require('moment');
 const { Game } = require('../models/game');
 const { fail } = require('../util/error_handler');
 const { whenIsTheGame, sendWeeklySMS } = require('../util/utils');
