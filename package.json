@@ -20,6 +20,9 @@
     "url": "https://github.com/dwoowb/blouses/issues"
   },
   "homepage": "https://github.com/dwoowb/blouses#readme",
+  "engines": {
+    "node": "7.0.0"
+  },
   "dependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^6.4.1",
