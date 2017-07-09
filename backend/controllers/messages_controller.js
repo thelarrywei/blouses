@@ -22,13 +22,13 @@ router.post('/reply', (req, res) => {
 
     Game.nextGame((gameErr, nextGame) => {
       handleError(gameErr);
-      
+
       if (!user) {
-        reply = 'This is not the number you\'re looking for...';
+        reply = replyText.DROIDS;
       } else if (message === 'COMMANDS') {
         reply = responseMapping[message];
       } else if (!nextGame) {
-        reply = 'Couldn\'t find the next game, are you sure the season is underway?';
+        reply = replyText.NO_CONTEST;
       } else {
         if (isValidStatus(message)) {
           const currentAttendance = nextGame.attendances[user.id];
@@ -51,12 +51,15 @@ router.post('/reply', (req, res) => {
             if (nextGame.bye) {
               reply = replyText.BYE;
             } else {
-              const currentRoster = [];
+              // TODO: rethink the design of Game's attendances, maybe it should mirror the structure below
+              const currentRoster = { IN: [], OUT: [], MAYBE: [] };
               Object.values(nextGame.attendances).forEach((attendance) => {
-                if (attendance.status === 'IN') currentRoster.push(attendance.user.name);
+                currentRoster[attendance.status].push(attendance.user.name);
               });
 
-              reply += currentRoster.join('\r\n') || replyText.EMPTY;
+              Object.keys(currentRoster).forEach((status) => {
+                reply += `${status}: ${currentRoster[status].join(', ')} \r\n`;
+              });
             }
 
             break;

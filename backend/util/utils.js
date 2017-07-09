@@ -28,7 +28,7 @@ const whenIsTheGame = (sendSMS) => {
       }, weeklyDelay);
       setTimeout(() => { sendSMS(nextGame); startInterval; }, initialDelay);
     } else {
-      console.log('Was not able to find a current or next game, maybe it\'s the offseason?');
+      console.log(replyText.NO_CONTEST);
     };
   });
 };
@@ -38,8 +38,8 @@ const sendWeeklySMS = (game) => {
 
   let SMSBody;
   const gameText = game.bye
-    ? 'we have a bye this week'
-    : `this week's game is on ${gameTime} reply IN, OUT, or MAYBE`;
+    ? replyText.BYE.toLowerCase()
+    : `this week's game is on ${gameTime} reply In, Out, or Maybe`;
 
   User.find({}, (err, members) => {
     if (err) {
@@ -47,7 +47,7 @@ const sendWeeklySMS = (game) => {
     } else {
       members.forEach(({ _id, name, phone, sentWeeklySMS }) => {
         if (!sentWeeklySMS[game.id]) {
-          SMSBody = `Hey ${name}, ${gameText}. replyText.SIG`;
+          SMSBody = `Hey ${name}, ${gameText}. ${replyText.SIG}`;
           client.messages.create({
             body: SMSBody,
             to: phone,

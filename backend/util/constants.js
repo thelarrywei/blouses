@@ -8,8 +8,9 @@ const responseMapping = {
 
 const replyText = {
   BYE: 'We have a bye this week',
-  EMPTY: 'Uh oh, nobody\'s playing yet',
   SIG: '-Blouses Bot',
+  DROIDS: 'This is not the number you\'re looking for...',
+  NO_CONTEST: 'Couldn\'t find the next game, are you sure the season is underway?',
 };
 
 const validStatuses = ['IN', 'OUT', 'MAYBE'];

@@ -11,3 +11,7 @@
 
 ### npm run dev to start dev server
  * run ngrok on your node port, then paste the ngrok url into the messaging webhook for your twilio phone number
+
+ ### TODO:
+ * add model level validations
+ * implement reminder
