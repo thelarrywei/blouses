@@ -76,7 +76,7 @@ const DEV_SMS = () => {
 };
 
 const formatGame = (game) => {
-  return moment(game.date).format('dddd M/D, h:mma');
+  return moment(game.date).format('M/D, h:mma');
 };
 
 const gameReminder = () => {
