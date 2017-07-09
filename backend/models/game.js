@@ -41,8 +41,8 @@ GameSchema.statics.nextGame = function nextGame(cb) {
   });
 };
 
-const gameHasPassed = function nextGameHasPassed(game) {
-  return moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment.tz(process.env.MOMENT_LOCALE)) ? true : false;
+const gameHasPassed = function gameHasPassed(game) {
+  return moment(game.date).diff(moment()) < 0;
 };
 
 mongoose.model('Game', GameSchema);
