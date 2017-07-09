@@ -7,6 +7,13 @@ const { whenIsTheGame, sendWeeklySMS } = require('../util/utils');
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 
+router.get('/:name', (req, res) => {
+  User.findOne({ name: req.params.name }, (err, user) => {
+    if (err) return fail(res, err, 'Error on finding user!', 400);
+    res.status(200).send(user);
+  })
+});
+
 router.post('/', (req, res) => {
   const user = new User({ name: req.body.name, phone: req.body.phone });
   user.save((err) => {
@@ -20,8 +27,11 @@ router.post('/', (req, res) => {
 router.patch('/:name', (req, res) => {
   // this assumes names are unique
   User.findOne({ name: req.params.name }, (err, user) => {
+    if (err) return fail(res, err, 'Error on finding user!', 400);
+    // may want to refactor this to be a put so you don't need to update this whenever you change User
     user.phone = req.body.phone || user.phone;
     user.name = req.body.name || user.name;
+    user.active = typeof req.body.active !== 'undefined' ? req.body.active : user.active;
 
     user.save((err, updatedUser) => {
       if (err) return fail(res, err, 'Error on update!', 400);
