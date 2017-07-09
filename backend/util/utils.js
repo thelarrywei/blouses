@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 const { client, twilioNumber } = require('../twilio_config');
 const { validStatuses, replyText } = require('./constants');
 const { handleError } = require('./error_handler');
