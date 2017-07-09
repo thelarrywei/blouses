@@ -27,6 +27,8 @@ router.post('/reply', (req, res) => {
         reply = replyText.DROIDS;
       } else if (message === 'COMMANDS') {
         reply = responseMapping[message];
+      } else if (!user.active) {
+        reply = replyText.INACTIVE;
       } else if (!nextGame) {
         reply = replyText.NO_CONTEST;
       } else {

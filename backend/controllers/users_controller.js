@@ -17,8 +17,18 @@ router.post('/', (req, res) => {
   });
 });
 
-router.put('/', (req, res) => {
-  
+router.patch('/:name', (req, res) => {
+  // this assumes names are unique
+  User.findOne({ name: req.params.name }, (err, user) => {
+    user.phone = req.body.phone || user.phone;
+    user.name = req.body.name || user.name;
+
+    user.save((err, updatedUser) => {
+      if (err) return fail(res, err, 'Error on update!', 400);
+      whenIsTheGame(sendWeeklySMS);
+      res.status(200).send(updatedUser);
+    });
+  })
 });
 
 module.exports = router;

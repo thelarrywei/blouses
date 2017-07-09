@@ -17,7 +17,6 @@ const whenIsTheGame = (sendSMS) => {
       // PROD
       // if initialDelay is negative we're already past the Sunday of the nextGame
       const initialDelay = moment.tz(nextGame.date, process.env.MOMENT_LOCALE).weekday(0).startOf('day').hour(10).diff(moment()) || 0;
-      console.log('******Initial Delay******', initialDelay);
       const weeklyDelay = 6.048e+8;
       // DEV
       // const initialDelay = 5000;
@@ -46,8 +45,8 @@ const sendWeeklySMS = (game) => {
     if (err) {
       handleError(err);
     } else {
-      members.forEach(({ _id, name, phone, sentWeeklySMS }) => {
-        if (!sentWeeklySMS[game.id]) {
+      members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
+        if (active && !sentWeeklySMS[game.id]) {
           SMSBody = `Hey ${name}, ${gameText}. ${replyText.SIG}`;
           client.messages.create({
             body: SMSBody,

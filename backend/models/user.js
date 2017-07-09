@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 const UserSchema = new mongoose.Schema({
   name: String,
   phone: String,
+  active: {
+    type: Boolean,
+    default: true
+  },
   sentWeeklySMS: {
     type: Schema.Types.Mixed,
     default: {}

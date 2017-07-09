@@ -11,6 +11,7 @@ const replyText = {
   SIG: '-Blouses Bot',
   DROIDS: 'This is not the number you\'re looking for...',
   NO_CONTEST: 'Couldn\'t find the next game, are you sure the season is underway?',
+  INACTIVE: 'I don\'t see you on the roster for this season...'
 };
 
 const validStatuses = ['IN', 'OUT', 'MAYBE'];
