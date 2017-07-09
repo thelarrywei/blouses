@@ -7,7 +7,7 @@ const server = app.listen(port, () => {
 });
 
 // PROD
-// whenIsTheGame(sendWeeklySMS);
+whenIsTheGame(sendWeeklySMS);
 // DEV
 // whenIsTheGame(DEV_SMS);
-setTimeout(() => {whenIsTheGame(sendWeeklySMS);}, 5000);
+// setTimeout(() => {whenIsTheGame(sendWeeklySMS);}, 5000);
