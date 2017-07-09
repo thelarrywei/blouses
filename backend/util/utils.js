@@ -16,8 +16,8 @@ const whenIsTheGame = (sendSMS) => {
     if (nextGame) {
       // PROD
       // if initialDelay is negative we're already past the Sunday of the nextGame
-      const initialDelay = moment(nextGame.date).weekday(0).startOf('day').hour(10).diff(moment()) || 0;
-      console.log(initialDelay);
+      const initialDelay = moment.tz(nextGame.date, process.env.MOMENT_LOCALE).weekday(0).startOf('day').hour(10).diff(moment()) || 0;
+      console.log('******Initial Delay******', initialDelay);
       const weeklyDelay = 6.048e+8;
       // DEV
       // const initialDelay = 5000;
