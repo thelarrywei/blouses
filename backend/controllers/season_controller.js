@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const moment = require('moment-timezone');
 const { Game } = require('../models/game');
 const { fail } = require('../util/error_handler');
 
@@ -14,7 +15,11 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  Game.insertMany(req.body, (err, games) => {
+  const season = req.body.map(({ date, time }) => {
+    return { date: moment.tz(`${date} ${time}`, 'M/D H:m', process.env.MOMENT_LOCALE).toISOString() }
+  });
+
+  Game.insertMany(season, (err, games) => {
     if (err) fail(res, err, 'Error on creating season!', 400);
     res.send(games);
   });

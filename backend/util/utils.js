@@ -10,23 +10,36 @@ const { Game } = require('../models/game');
 const whenIsTheGame = (sendSMS) => {
   Game.currentGame((err, currentGame) => {
     handleError(err);
+    // if currentGame is null no game was found
+    console.log('*****Current Game*****\r\n', currentGame);
 
     // PROD
+    let initialDelay;
     const weeklyDelay = 6.048e+8;
     // DEV
     // const initialDelay = 5000;
     // const weeklyDelay = 5000;
+    nextGame = true;
+    // PROD
 
+    let game;
     if (currentGame) {
-      const game = currentGame;
-      const initialDelay = moment(currentGame.date, 'M/D').weekday(0).startOf('day').hour(10).diff(moment());
+      game = currentGame;
+      initialDelay = moment.tz(currentGame.date, process.env.MOMENT_LOCALE).weekday(0).startOf('day').hour(10).diff(moment());
+      // debugger;
+      initialDelay = 5000;
       // if initialDelay is negative meaning when it is calculated we're already past Sunday 10AM of that week's game
-      // then we should check and see if the initial text for said game was sent out if it was do nothing, if it wasn't send text immediately
-    } else {
-      // const game = nextGame;
+      // that week's game 
+    } else if (nextGame) {
+      // game = nextGame;
+      // TODO: implement nextGame and remove the below game assignment
+      game = currentGame;
+      initialDelay = 5000;
       // find the next game i.e. first game past today's date and set the initialDelay accordingly
       // might want to implement nextGame as a Game method
-    }
+    } else {
+      console.log('Was not able to find a current or next game, maybe it\'s the offseason?');
+    };
 
     const startInterval = setInterval(() => {
         sendSMS(game);
@@ -35,19 +48,15 @@ const whenIsTheGame = (sendSMS) => {
   });
 };
 
-const todayIsSunday = () => {
-  const then = moment();
-  const now = moment();
-  debugger;
-  moment().isSame(moment().weekday(0));
-};
-
 const sendWeeklySMS = (game) => {
   // maybe we should return something more useful here, but basically don't spam if there's no game
   if (!game) return;
+  const gameTime = moment(currentGame.date).format('dddd M/D, h:ma');
 
   let SMSBody;
-  const gameText = game.bye ? 'we have a bye this week' : `this week's game is on ${game.date} at ${game.time} reply IN, OUT, or MAYBE`;
+  const gameText = game.bye
+    ? 'we have a bye this week'
+    : `this week's game is on ${gameTime} reply IN, OUT, or MAYBE`;
 
   members.forEach(({ name, phone }) => {
     SMSBody = `Hey ${name}, ${gameText}. replyText.SIG`;
