@@ -1,9 +1,9 @@
 const responseMapping = {
   IN: 'Great, see you at the game!',
   OUT: 'That\'s too bad, bye bye playing time!',
-  MAYBE: 'Okay, well it\'s never too late to change your mind and reply \'IN\'',
-  HELP: 'Try some of these keywords \'IN\', \'OUT\', \'MAYBE\', \'ROSTER\'',
-  DEFAULT: 'Sorry I didn\'t understand that, reply with \'HELP\' for more information.',
+  MAYBE: 'Okay, well it\'s never too late to change your mind and reply \'In\'',
+  COMMANDS: 'Try one of these keywords: \'In\', \'Out\', \'Maybe\', \'Roster\'',
+  DEFAULT: 'Sorry I didn\'t understand that, reply with \'Commands\' for more information.',
 };
 
 const replyText = {

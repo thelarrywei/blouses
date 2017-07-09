@@ -7,6 +7,7 @@ const server = app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 });
 
+// PROD
 // whenIsTheGame(sendWeeklySMS);
 // DEV
 // whenIsTheGame(DEV_SMS);
