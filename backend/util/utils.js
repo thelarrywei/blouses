@@ -39,14 +39,14 @@ const sendWeeklySMS = (game) => {
   let SMSBody;
   const gameText = game.bye
     ? replyText.BYE.toLowerCase()
-    : `this week's game is on ${gameTime} reply In, Out, or Maybe`;
+    : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
 
   User.find({}, (err, members) => {
     if (err) return handleError(err);
 
     members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
       if (active && !sentWeeklySMS[game.id]) {
-        SMSBody = `Hey ${name}, ${gameText}. ${replyText.SIG}`;
+        SMSBody = `Hey ${name}, ${gameText} ${replyText.SIG}`;
         client.messages.create({
           body: SMSBody,
           to: phone,
