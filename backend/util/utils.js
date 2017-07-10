@@ -5,7 +5,7 @@ const { handleError } = require('./error_handler');
 const { Game } = require('../models/game');
 const { User } = require('../models/user');
 
-// TODO: breakout whenIsTheGame, sendWeeklySMS, DEV_SMS, and gameReminder into a ScheduledTexts module?
+// TODO: breakout whenIsTheGame, sendWeeklySMS, and gameReminder into a ScheduledTexts module?
 
 const whenIsTheGame = (sendSMS) => {
   Game.nextGame((err, nextGame) => {
@@ -67,14 +67,6 @@ const sendWeeklySMS = (game) => {
   });
 };
 
-const DEV_SMS = () => {
-  client.messages.create({
-    body: 'it\'s working! *cue Anakin in podracer gif*',
-    to: process.env.DEV_NUMBER,
-    from: twilioNumber,
-  });
-};
-
 const formatGame = (game) => {
   return moment(game.date).format('M/D, h:mma');
 };
@@ -88,4 +80,4 @@ const gameReminder = () => {
 
 const isValidStatus = status => validStatuses.includes(status);
 
-module.exports = { whenIsTheGame, sendWeeklySMS, DEV_SMS, isValidStatus, formatGame };
+module.exports = { whenIsTheGame, sendWeeklySMS, isValidStatus, formatGame };
