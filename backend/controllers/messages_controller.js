@@ -74,6 +74,8 @@ router.post('/reply', (req, res) => {
         body: reply,
         to: From,
         from: twilioNumber,
+      }).then((response) => {
+        res.status(200).send(response);
       });
     });
   });
