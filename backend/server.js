@@ -6,7 +6,9 @@ const server = app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 });
 
-// PROD
-whenIsTheGame(sendWeeklySMS);
-// DEV
-// setTimeout(() => {whenIsTheGame(sendWeeklySMS);}, 5000);
+if (process.env.ENV === 'PROD') {
+  whenIsTheGame(sendWeeklySMS);
+} else {
+  // DEV
+  setTimeout(() => {whenIsTheGame(sendWeeklySMS);}, 5000);
+}
