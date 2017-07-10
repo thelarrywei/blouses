@@ -9,9 +9,8 @@ const { User } = require('../models/user');
 
 const kickOffSMS = (sendSMS) => {
   Game.nextGame((err, nextGame) => {
-    handleError(err);
-    // if nextGame is null no game was found
-    console.log('*****Current Game*****\r\n', nextGame);
+    if (err) return handleError(err);
+    // console.log('*****Current Game*****\r\n', nextGame);
 
     if (nextGame) {
       // PROD
@@ -24,43 +23,45 @@ const kickOffSMS = (sendSMS) => {
       // PROD
 
       const startInterval = setInterval(() => {
-          sendSMS(nextGame);
+          sendSMS();
       }, weeklyDelay);
-      setTimeout(() => { sendSMS(nextGame); startInterval; }, initialDelay);
+      setTimeout(() => { sendSMS(); startInterval; }, initialDelay);
     } else {
       console.log(replyText.NO_CONTEST);
     };
   });
 };
 
-const sendWeeklySMS = (game) => {
-  const gameTime = formatGame(game);
+const sendWeeklySMS = () => {
+  Game.nextGame((err, game) => {
+    const gameTime = formatGame(game);
 
-  let SMSBody;
-  const gameText = game.bye
-    ? replyText.BYE.toLowerCase()
-    : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
+    let SMSBody;
+    const gameText = game.bye
+      ? replyText.BYE.toLowerCase()
+      : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
 
-  User.find({}, (err, members) => {
-    if (err) return handleError(err);
+    User.find({}, (err, members) => {
+      if (err) return handleError(err);
 
-    members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
-      if (active && !sentWeeklySMS[game.id]) {
-        SMSBody = `Hey ${name}, ${gameText} ${replyText.SIG}`;
-        client.messages.create({
-          body: SMSBody,
-          to: phone,
-          from: twilioNumber,
-        }).then(response => {
-          console.log(response);
-          sentWeeklySMS[game.id] = true;
-          User.update(
-            { _id },
-            { $set: { sentWeeklySMS } },
-            handleError
-          );
-        });
-      }
+      members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
+        if (active && !sentWeeklySMS[game.id]) {
+          SMSBody = `Hey ${name}, ${gameText} ${replyText.SIG}`;
+          client.messages.create({
+            body: SMSBody,
+            to: phone,
+            from: twilioNumber,
+          }).then(response => {
+            console.log(response);
+            sentWeeklySMS[game.id] = true;
+            User.update(
+              { _id },
+              { $set: { sentWeeklySMS } },
+              handleError
+            );
+          });
+        }
+      });
     });
   });
 };

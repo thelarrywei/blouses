@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { User } = require('../models/user');
 const { fail } = require('../util/error_handler');
-const { kickOffSMS, sendWeeklySMS } = require('../util/utils');
+const { sendWeeklySMS } = require('../util/utils');
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
   User.insertMany(req.body, (err, members) => {
-    err ? fail(res, err, 'Error on creating team!', 400) : kickOffSMS(sendWeeklySMS);
+    err ? fail(res, err, 'Error on creating team!', 400) : sendWeeklySMS();
     res.send(members);
   });
 });
