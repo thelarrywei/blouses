@@ -42,28 +42,26 @@ const sendWeeklySMS = (game) => {
     : `this week's game is on ${gameTime} reply In, Out, or Maybe`;
 
   User.find({}, (err, members) => {
-    if (err) {
-      handleError(err);
-    } else {
-      members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
-        if (active && !sentWeeklySMS[game.id]) {
-          SMSBody = `Hey ${name}, ${gameText}. ${replyText.SIG}`;
-          client.messages.create({
-            body: SMSBody,
-            to: phone,
-            from: twilioNumber,
-          }).then(response => {
-            console.log(response);
-            sentWeeklySMS[game.id] = true;
-            User.update(
-              { _id },
-              { $set: { sentWeeklySMS } },
-              handleError
-            );
-          });
-        }
-      });
-    }
+    if (err) return handleError(err);
+
+    members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
+      if (active && !sentWeeklySMS[game.id]) {
+        SMSBody = `Hey ${name}, ${gameText}. ${replyText.SIG}`;
+        client.messages.create({
+          body: SMSBody,
+          to: phone,
+          from: twilioNumber,
+        }).then(response => {
+          console.log(response);
+          sentWeeklySMS[game.id] = true;
+          User.update(
+            { _id },
+            { $set: { sentWeeklySMS } },
+            handleError
+          );
+        });
+      }
+    });
   });
 };
 
