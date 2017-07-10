@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { User } = require('../models/user');
 const { fail } = require('../util/error_handler');
-const { whenIsTheGame, sendWeeklySMS } = require('../util/utils');
+const { kickOffSMS, sendWeeklySMS } = require('../util/utils');
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
   user.save((err) => {
     if (err) fail(res, err, 'Error on save!', 400);
   }).then(() => {
-    whenIsTheGame(sendWeeklySMS);
+    kickOffSMS(sendWeeklySMS);
     res.status(201).send(user);
   });
 });
@@ -35,7 +35,7 @@ router.patch('/:name', (req, res) => {
 
     user.save((err, updatedUser) => {
       if (err) return fail(res, err, 'Error on update!', 400);
-      whenIsTheGame(sendWeeklySMS);
+      kickOffSMS(sendWeeklySMS);
       res.status(200).send(updatedUser);
     });
   })

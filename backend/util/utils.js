@@ -5,9 +5,9 @@ const { handleError } = require('./error_handler');
 const { Game } = require('../models/game');
 const { User } = require('../models/user');
 
-// TODO: breakout whenIsTheGame, sendWeeklySMS, and gameReminder into a ScheduledTexts module?
+// TODO: breakout kickOffSMS, sendWeeklySMS, and gameReminder into a ScheduledTexts module?
 
-const whenIsTheGame = (sendSMS) => {
+const kickOffSMS = (sendSMS) => {
   Game.nextGame((err, nextGame) => {
     handleError(err);
     // if nextGame is null no game was found
@@ -78,4 +78,4 @@ const gameReminder = () => {
 
 const isValidStatus = status => validStatuses.includes(status);
 
-module.exports = { whenIsTheGame, sendWeeklySMS, isValidStatus, formatGame };
+module.exports = { kickOffSMS, sendWeeklySMS, isValidStatus, formatGame };

@@ -1,5 +1,5 @@
 const app = require('./app');
-const { whenIsTheGame, sendWeeklySMS } = require('./util/utils');
+const { kickOffSMS, sendWeeklySMS } = require('./util/utils');
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
@@ -7,8 +7,8 @@ const server = app.listen(port, () => {
 });
 
 if (process.env.ENV === 'PROD') {
-  whenIsTheGame(sendWeeklySMS);
+  kickOffSMS(sendWeeklySMS);
 } else {
   // DEV
-  setTimeout(() => {whenIsTheGame(sendWeeklySMS);}, 5000);
+  setTimeout(() => {kickOffSMS(sendWeeklySMS);}, 5000);
 }

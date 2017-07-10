@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const moment = require('moment');
 const { Game } = require('../models/game');
 const { fail } = require('../util/error_handler');
-const { whenIsTheGame, sendWeeklySMS } = require('../util/utils');
+const { kickOffSMS, sendWeeklySMS } = require('../util/utils');
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
   });
 
   Game.insertMany(season, (err, games) => {
-    err ? fail(res, err, 'Error on creating season!', 400) : whenIsTheGame(sendWeeklySMS);
+    err ? fail(res, err, 'Error on creating season!', 400) : kickOffSMS(sendWeeklySMS);
     res.send(games);
   });
 });
