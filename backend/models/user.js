@@ -10,7 +10,10 @@ const UserSchema = new mongoose.Schema({
   },
   sentWeeklySMS: {
     type: Schema.Types.Mixed,
-    default: {}
+    default: {
+      announcements: {},
+      reminders: {}
+    }
   },
 }, { minimize: false });
 
