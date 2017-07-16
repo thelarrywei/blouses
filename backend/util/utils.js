@@ -1,4 +1,5 @@
 const moment = require('moment-timezone');
+const converter = require('number-to-words');
 const { client, twilioNumber } = require('../twilio_config');
 const { validStatuses, replyText, oneWeek, remindDay, announceDay, scheduledTime } = require('./constants');
 const { handleError } = require('./error_handler');
@@ -76,9 +77,18 @@ const remind = (game) => {
   const notIn = (val) => (['OUT', 'MAYBE'].includes(val.status));
   const maybe = (val) => (attendance.status === 'MAYBE');
   const rosterSize = attendances.filter(isIn).length;
-  let membersToRemind = [];
-  // TODO: make the below gameText better for rosterSize of 0 and 1
-  let gameText = `we only have ${rosterSize} blouses showing up this week, `;
+  let rosterText = (() => {
+    switch (rosterSize) {
+      case 0:
+        return 'have no blouses';
+      case 1:
+        return `only have ${converter.toWords(rosterSize)} blouse`;
+      default:
+        return `only have ${converter.toWords(rosterSize)} blouses`;
+    }
+  })();
+
+  let gameText = `we ${rosterText} showing up this week, `;
 
   const findMembers = (attendances, filter) => {
     return attendances.reduce((members, attendance) => {
@@ -88,6 +98,7 @@ const remind = (game) => {
   };
 
 // TODO: send messages to those who have yet to respond as well
+  let membersToRemind = [];
   if (rosterSize < 5) {
     membersToRemind = findMembers(attendances, notIn);
     gameText += 'can you help us avoid a forfeit?';

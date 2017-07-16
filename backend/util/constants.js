@@ -15,7 +15,7 @@ const replyText = {
 };
 
 const validStatuses = ['IN', 'OUT', 'MAYBE'];
-
+// one week in milliseconds
 const oneWeek = 6.048e+8;
 // Tuesday
 const remindDay = 2;
