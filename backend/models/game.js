@@ -41,7 +41,7 @@ GameSchema.statics.nextGame = function nextGame(cb) {
 };
 
 const gameHasPassed = function gameHasPassed(game) {
-  console.log('gameHasPassed: ', moment(game.date).diff(moment()));
+  console.log('gameHasPassed: ', moment(game.date).diff(moment.tz(process.env.MOMENT_LOCALE)));
   console.log('gameHasPassedTZ: ', moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()));
   return moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()) < 0;
 };
