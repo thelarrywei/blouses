@@ -59,7 +59,7 @@ const announce = (game) => {
   let SMSBody;
   const gameText = game.bye
     ? replyText.BYE.toLowerCase()
-    : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
+    : `the next game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
 
   User.find({}, (err, members) => {
     if (err) return handleError(err);

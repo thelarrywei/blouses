@@ -41,7 +41,8 @@ GameSchema.statics.nextGame = function nextGame(cb) {
 };
 
 const gameHasPassed = function gameHasPassed(game) {
-  return moment(game.date).diff(moment()) < 0;
+  console.log('gameHasPassed: ', moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()));
+  return moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()) < 0;
 };
 
 mongoose.model('Game', GameSchema);
