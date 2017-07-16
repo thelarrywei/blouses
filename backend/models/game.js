@@ -42,7 +42,7 @@ GameSchema.statics.nextGame = function nextGame(cb) {
 
 const gameHasPassed = function gameHasPassed(game) {
   console.log('gameHasPassed: ', moment(game.date).diff(moment.tz(process.env.MOMENT_LOCALE)));
-  console.log('gameHasPassedTZ: ', moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()));
+  console.log('gameHasPassedTZ: ', moment.tz(game.date, process.env.MOMENT_LOCALE).weekday(3).startOf('day').hour(20).diff(moment()));
   console.log('sigh: ', moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment.tz(process.env.MOMENT_LOCALE)));
   return moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()) < 0;
 };
