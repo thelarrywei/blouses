@@ -10,7 +10,7 @@ const { User } = require('../models/user');
 
 const getInitialDelay = (game, day, time) => {
   // moment diff is negative we're already past the scheduled time
-  console.log('NONTZ: ', moment().weekday(day).startOf('day').hour(time).diff(moment()) || 0;);
+  console.log('NONTZ: ', moment().weekday(day).startOf('day').hour(time).diff(moment()) || 0);
   return moment.tz(game.date, process.env.MOMENT_LOCALE).weekday(day).startOf('day').hour(time).diff(moment()) || 0;
 };
 
