@@ -76,6 +76,7 @@ const remind = (game) => {
   const isIn = (val) => (val.status === 'IN');
   const notIn = (val) => (['OUT', 'MAYBE'].includes(val.status));
   const maybe = (val) => (attendance.status === 'MAYBE');
+  const allResponses = (val) => (true);
   const rosterSize = attendances.filter(isIn).length;
   let rosterText = (() => {
     switch (rosterSize) {
@@ -90,24 +91,28 @@ const remind = (game) => {
 
   let gameText = `we ${rosterText} showing up this week, `;
 
-  const findMembers = (attendances, filter) => {
+  const findMembers = (filter) => {
     return attendances.reduce((members, attendance) => {
       if (filter(attendance)) return members.concat([attendance.user]);
       else return members;
     }, []);
   };
 
-// TODO: send messages to those who have yet to respond as well
-  let membersToRemind = [];
-  if (rosterSize < 5) {
-    membersToRemind = findMembers(attendances, notIn);
-    gameText += 'can you help us avoid a forfeit?';
-  } else if (rosterSize === 5) {
-    membersToRemind = findMembers(attendances, maybe);
-    gameText += 'can you help us get a few more on the floor?';
-  };
+  const responderIds = findMembers(allResponses).map(member => member._id);
 
-  if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
+  User.find({ _id: { $nin: responderIds } }, (err, nonResponders) => {
+    let membersToRemind = nonResponders;
+    if (rosterSize < 5) {
+      membersToRemind.concat(findMembers(notIn));
+      gameText += 'can you help us avoid a forfeit?';
+    } else if (rosterSize === 5) {
+      membersToRemind.concat(findMembers(maybe));
+      gameText += 'can you help us get a few more on the floor?';
+    };
+
+    if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
+    if (err) return handleError(err);
+  });
 };
 
 
