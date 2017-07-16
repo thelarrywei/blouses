@@ -16,4 +16,12 @@ const replyText = {
 
 const validStatuses = ['IN', 'OUT', 'MAYBE'];
 
-module.exports = { responseMapping, replyText, validStatuses };
+const oneWeek = 6.048e+8;
+// Tuesday
+const remindDay = 2;
+// Sunday
+const announceDay = 0;
+
+const scheduledTime = 10;
+
+module.exports = { responseMapping, replyText, validStatuses, oneWeek, remindDay, announceDay, scheduledTime };

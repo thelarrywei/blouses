@@ -1,31 +1,114 @@
 const moment = require('moment-timezone');
 const { client, twilioNumber } = require('../twilio_config');
-const { validStatuses, replyText } = require('./constants');
+const { validStatuses, replyText, oneWeek, remindDay, announceDay, scheduledTime } = require('./constants');
 const { handleError } = require('./error_handler');
 const { Game } = require('../models/game');
 const { User } = require('../models/user');
 
 // TODO: breakout kickOffSMS, sendWeeklySMS, and gameReminder into a ScheduledTexts module?
 
-const kickOffSMS = (sendSMS) => {
-  Game.nextGame((err, nextGame) => {
+const getInitialDelay = (game, day, time) => {
+  // moment diff is negative we're already past the scheduled time
+  return moment.tz(game.date, process.env.MOMENT_LOCALE).weekday(day).startOf('day').hour(time).diff(moment()) || 0;
+};
+
+const scheduleWeeklySMS = (game, day, time, sendSMS) => {
+  // PROD
+  const initialDelay = getInitialDelay(game, day, time);
+  const intervalDelay = oneWeek;
+  // DEV
+  // const initialDelay = 5000;
+  // const intervalDelay = 5000;
+  // PROD
+  const startInterval = setInterval(() => {
+      sendSMS();
+  }, intervalDelay);
+
+  setTimeout(() => { sendSMS(); startInterval; }, initialDelay);
+};
+
+const sendMessage = ({ members, gameId, gameText, messagesType }) => {
+  const activeAndLonely = ({ active, sentWeeklySMS }) => {
+    // undefined check bc Mongoose doesn't support minimize: false for nested objects
+    if (typeof sentWeeklySMS[messagesType] === 'undefined') sentWeeklySMS[messagesType] = {};
+    return active && !sentWeeklySMS[messagesType][gameId]
+  };
+  // filter by members who are active and haven't received the weekly message
+  // TODO: think about decoupling activeAndLonely from sendMessage, perhaps move it into announce and remind
+  members.filter(activeAndLonely).forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
+    SMSBody = `Hey ${name}, ${gameText} ${replyText.SIG}`;
+    client.messages.create({
+      body: SMSBody,
+      to: phone,
+      from: twilioNumber,
+    }).then(response => {
+      console.log(response);
+      sentWeeklySMS[messagesType][gameId] = true;
+      User.update(
+        { _id },
+        { $set: { sentWeeklySMS } },
+        handleError
+      );
+    });
+  });
+};
+
+const announce = (game) => {
+  const gameTime = formatGame(game);
+
+  let SMSBody;
+  const gameText = game.bye
+    ? replyText.BYE.toLowerCase()
+    : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
+
+  User.find({}, (err, members) => {
     if (err) return handleError(err);
-    // console.log('*****Current Game*****\r\n', nextGame);
 
-    if (nextGame) {
-      // PROD
-      // if initialDelay is negative we're already past the Sunday of the nextGame
-      const initialDelay = moment.tz(nextGame.date, process.env.MOMENT_LOCALE).weekday(0).startOf('day').hour(10).diff(moment()) || 0;
-      const weeklyDelay = 6.048e+8;
-      // DEV
-      // const initialDelay = 5000;
-      // const weeklyDelay = 5000;
-      // PROD
+    if (members) sendMessage({ members, gameId: game.id, gameText, messagesType: 'announcements' });
+  });
+};
 
-      const startInterval = setInterval(() => {
-          sendSMS();
-      }, weeklyDelay);
-      setTimeout(() => { sendSMS(); startInterval; }, initialDelay);
+const remind = (game) => {
+  if (game.bye) return;
+
+  const attendances = Object.values(game.attendances);
+  const isIn = (val) => (val.status === 'IN');
+  const notIn = (val) => (['OUT', 'MAYBE'].includes(val.status));
+  const maybe = (val) => (attendance.status === 'MAYBE');
+  const rosterSize = attendances.filter(isIn).length;
+  let membersToRemind = [];
+  // TODO: make the below gameText better for rosterSize of 0 and 1
+  let gameText = `we only have ${rosterSize} blouses showing up this week, `;
+
+  const findMembers = (attendances, filter) => {
+    return attendances.reduce((members, attendance) => {
+      if (filter(attendance)) return members.concat([attendance.user]);
+      else return members;
+    }, []);
+  };
+
+// TODO: send messages to those who have yet to respond as well
+  if (rosterSize < 5) {
+    membersToRemind = findMembers(attendances, notIn);
+    gameText += 'can you help us avoid a forfeit?';
+  } else if (rosterSize === 5) {
+    membersToRemind = findMembers(attendances, maybe);
+    gameText += 'can you help us get a few more on the floor?';
+  };
+
+  if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
+};
+
+
+const kickOffSMS = () => {
+  Game.nextGame((err, game) => {
+    if (err) return handleError(err);
+
+    if (game) {
+      scheduleWeeklySMS(game, announceDay, scheduledTime, () => announce(game));
+      scheduleWeeklySMS(game, remindDay, scheduledTime, () => remind(game));
+      console.log('announcement delay: ', getInitialDelay(game, announceDay, scheduledTime));
+      console.log('reminder delay: ', getInitialDelay(game, remindDay, scheduledTime));
     } else {
       console.log(replyText.NO_CONTEST);
     };
@@ -34,47 +117,21 @@ const kickOffSMS = (sendSMS) => {
 
 const sendWeeklySMS = () => {
   Game.nextGame((err, game) => {
-    const gameTime = formatGame(game);
-
-    let SMSBody;
-    const gameText = game.bye
-      ? replyText.BYE.toLowerCase()
-      : `this week's game is on ${gameTime} reply 'In', 'Out', or 'Maybe'. Text 'Roster' to see who's playing.`;
-
-    User.find({}, (err, members) => {
-      if (err) return handleError(err);
-
-      members.forEach(({ _id, name, phone, active, sentWeeklySMS }) => {
-        if (active && !sentWeeklySMS[game.id]) {
-          SMSBody = `Hey ${name}, ${gameText} ${replyText.SIG}`;
-          client.messages.create({
-            body: SMSBody,
-            to: phone,
-            from: twilioNumber,
-          }).then(response => {
-            console.log(response);
-            sentWeeklySMS[game.id] = true;
-            User.update(
-              { _id },
-              { $set: { sentWeeklySMS } },
-              handleError
-            );
-          });
-        }
-      });
-    });
+    if (err) return handleError(err);
+    if (game) {
+      // DEV
+      // announce(game);
+      // remind(game);
+      // PROD
+      // only announce and remind if we're already overdue for the week
+      if (getInitialDelay(game, announceDay, scheduledTime) === 0) announce(game);
+      if (getInitialDelay(game, remindDay, scheduledTime) === 0) remind(game);
+    }
   });
 };
 
 const formatGame = (game) => {
   return moment(game.date).format('M/D, h:mma');
-};
-
-const gameReminder = () => {
-  // TODO: every Tuesday remind the team of the game time and who's in so far
-  // TODO: if we're at 5 ask the maybe's to confirm in or out
-  // TODO: if we're under 5 tell the maybe's and the out's we need more people
-  // TODO: append text with replyText.SIG, maybe for all non reply sms we should append the sig
 };
 
 const isValidStatus = status => validStatuses.includes(status);
