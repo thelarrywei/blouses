@@ -41,10 +41,10 @@ GameSchema.statics.nextGame = function nextGame(cb) {
 };
 
 const gameHasPassed = function gameHasPassed(game) {
-  console.log(`${moment(game.date).diff(moment())} milliseconds till game`);
-  console.log('game date: ', moment.tz(game.date, process.env.MOMENT_LOCALE).toString());
+  console.log(`${moment(game.date).diff(moment.tz(process.env.MOMENT_LOCALE))} milliseconds till game`);
+  console.log('tz game date: ', moment.tz(game.date, process.env.MOMENT_LOCALE).toString());
   console.log('current date: ', moment().toString());
-  console.log('current tz date: ', moment.tz(process.env.MOMENT_LOCALE).toString());
+  console.log('tz current date: ', moment.tz(process.env.MOMENT_LOCALE).toString());
   const gameDate = moment(game.date);
   console.log('sigh maybe this will have to do: ',moment.tz(game.date, process.env.MOMENT_LOCALE).weekday(3).startOf('day').hour(gameDate.hours()).minute(gameDate.minutes()).diff(moment()));
   return moment.tz(game.date, process.env.MOMENT_LOCALE).weekday(3).startOf('day').hour(gameDate.hours()).minute(gameDate.minutes()).diff(moment()) < 0;
