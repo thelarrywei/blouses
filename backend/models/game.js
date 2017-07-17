@@ -41,6 +41,7 @@ GameSchema.statics.nextGame = function nextGame(cb) {
 };
 
 const gameHasPassed = function gameHasPassed(game) {
+  console.log(`${moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment())} milliseconds till next game`);
   return moment.tz(game.date, process.env.MOMENT_LOCALE).diff(moment()) < 0;
 };
 
