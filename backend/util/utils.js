@@ -147,7 +147,7 @@ const sendWeeklySMS = () => {
 };
 
 const formatGame = (game) => {
-  return moment(game.date).format('M/D, h:mma');
+  return moment.tz(game.date, process.env.MOMENT_LOCALE).format('M/D, h:mma');
 };
 
 const isValidStatus = status => validStatuses.includes(status);

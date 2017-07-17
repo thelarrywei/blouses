@@ -16,8 +16,8 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const season = req.body.map(({ date, time }) => {
-    return { date: moment(`${date} ${time}`, 'M/D H:m').toISOString() }
+  const season = req.body.map(({ date, time, bye = false }) => {
+    return { date: moment.tz(`${date} ${time}`, 'M/D H:m', process.env.MOMENT_LOCALE).toISOString(), bye };
   });
 
   Game.insertMany(season, (err, games) => {
