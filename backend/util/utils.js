@@ -100,15 +100,21 @@ const remind = (game) => {
 
   const responderIds = findMembers(allResponses).map(member => member._id);
 
-  User.find({ _id: { $nin: responderIds } }, (err, nonResponders) => {
-    let membersToRemind = nonResponders;
-    if (rosterSize < 5) {
-      membersToRemind.concat(findMembers(notIn));
-      gameText += 'can you help us avoid a forfeit?';
-    } else if (rosterSize === 5) {
-      membersToRemind.concat(findMembers(maybe));
-      gameText += 'can you help us get a few more on the floor?';
-    };
+  User.find({ _id: { $nin: responderIds } }, (err, users) => {
+    // not sure what happens with users if mongoose returns an error, we want to execute reminder anyways
+    const nonResponders = users || [];
+    let membersToRemind = (() => {
+      switch (true) {
+        case (rosterSize < 5):
+          gameText += 'can you help us avoid a forfeit?';
+          return nonResponders.concat(findMembers(notIn));
+        case (rosterSize === 5):
+          gameText += 'can you help us get a few more on the floor?';
+          return nonResponders.concat(findMembers(maybe));
+        default:
+          return [];
+      }
+    })();
 
     if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
     if (err) return handleError(err);
