@@ -15,9 +15,10 @@ router.get('/:name', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  // should create and add to attendances of all games as SILENT with new user
   const user = new User({ name: req.body.name, phone: req.body.phone });
   user.save((err) => {
-    if (err) fail(res, err, 'Error on save!', 400);
+    if (err) return fail(res, err, 'Error on save!', 400);
   }).then(() => {
     sendWeeklySMS();
     res.status(201).send(user);

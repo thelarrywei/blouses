@@ -9,21 +9,22 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => {
   User.find({}, (err, users) => {
-    if (err) fail(res, err, 'Error on getting all users!', 400);
+    if (err) return fail(res, err, 'Error on getting all users!', 400);
     res.send(users);
   });
 });
 
 router.post('/', (req, res) => {
   User.insertMany(req.body, (err, members) => {
-    err ? fail(res, err, 'Error on creating team!', 400) : sendWeeklySMS();
+    if (err) return fail(res, err, 'Error on creating team!', 400)
+    sendWeeklySMS();
     res.send(members);
   });
 });
 
 router.delete('/', (req, res) => {
   User.remove({}, (err) => {
-    if (err) fail(res, err, 'Error on destroy!', 400);
+    if (err) return fail(res, err, 'Error on destroy!', 400);
     res.send('Entire team was deleted');
   });
 });

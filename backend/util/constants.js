@@ -14,6 +14,8 @@ const replyText = {
   INACTIVE: 'I don\'t see you on the roster for this season...'
 };
 
+const attendanceStatuses = ['IN', 'OUT', 'MAYBE', 'SILENT'];
+// really should be validResponses
 const validStatuses = ['IN', 'OUT', 'MAYBE'];
 // one week in milliseconds
 const oneWeek = 6.048e+8;
@@ -24,4 +26,4 @@ const announceDay = 0;
 
 const scheduledTime = 10;
 
-module.exports = { responseMapping, replyText, validStatuses, oneWeek, remindDay, announceDay, scheduledTime };
+module.exports = { responseMapping, replyText, validStatuses, oneWeek, remindDay, announceDay, scheduledTime, attendanceStatuses };

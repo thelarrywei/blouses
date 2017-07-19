@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { client, twilioNumber } = require('../twilio_config');
-const { responseMapping, replyText } = require('../util/constants');
+const { responseMapping, replyText, attendanceStatuses } = require('../util/constants');
 const { isValidStatus, formatGame } = require('../util/utils');
 const { handleError } = require('../util/error_handler');
 
@@ -54,7 +54,7 @@ router.post('/reply', (req, res) => {
               reply = replyText.BYE;
             } else {
               // TODO: rethink the design of Game's attendances, maybe it should mirror the structure below
-              const currentRoster = { IN: [], OUT: [], MAYBE: [] };
+              const currentRoster = attendanceStatuses.reduce((accum, status) => { accum[status] = []; return accum; }, {});
               Object.values(nextGame.attendances).forEach((attendance) => {
                 currentRoster[attendance.status].push(attendance.user.name);
               });
