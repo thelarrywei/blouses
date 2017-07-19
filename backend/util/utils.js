@@ -74,9 +74,9 @@ const remind = (game) => {
 
   const attendances = Object.values(game.attendances);
   const isIn = (val) => (val.status === 'IN');
-  const notIn = (val) => (['OUT', 'MAYBE'].includes(val.status));
-  const maybe = (val) => (attendance.status === 'MAYBE');
-  const allResponses = (val) => (true);
+  const notIn = (val) => (['OUT', 'MAYBE', 'SILENT'].includes(val.status));
+  const maybe = (val) => (['MAYBE', 'SILENT'].includes(val.status));
+
   const rosterSize = attendances.filter(isIn).length;
   let rosterText = (() => {
     switch (rosterSize) {
@@ -98,27 +98,20 @@ const remind = (game) => {
     }, []);
   };
 
-  const responderIds = findMembers(allResponses).map(member => member._id);
+  let membersToRemind = (() => {
+    switch (true) {
+      case (rosterSize < 5):
+        gameText += 'can you help us avoid a forfeit?';
+        return findMembers(notIn);
+      case (rosterSize === 5):
+        gameText += 'can you help us get a few more on the floor?';
+        return findMembers(maybe);
+      default:
+        return [];
+    }
+  })();
 
-  User.find({ _id: { $nin: responderIds } }, (err, users) => {
-    // not sure what happens with users if mongoose returns an error, we want to execute reminder anyways
-    const nonResponders = users || [];
-    let membersToRemind = (() => {
-      switch (true) {
-        case (rosterSize < 5):
-          gameText += 'can you help us avoid a forfeit?';
-          return nonResponders.concat(findMembers(notIn));
-        case (rosterSize === 5):
-          gameText += 'can you help us get a few more on the floor?';
-          return nonResponders.concat(findMembers(maybe));
-        default:
-          return [];
-      }
-    })();
-
-    if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
-    if (err) return handleError(err);
-  });
+  if (membersToRemind.length > 0) sendMessage({ members: membersToRemind, gameId: game.id, gameText, messagesType: 'reminders' });
 };
 
 
