@@ -31,6 +31,8 @@ router.post('/reply', (req, res) => {
         reply = replyText.INACTIVE;
       } else if (!nextGame) {
         reply = replyText.NO_CONTEST;
+      } else if (nextGame.bye) {
+        reply = replyText.BYE;
       } else {
         if (isValidStatus(message)) {
           const currentAttendance = nextGame.attendances[user.id];
@@ -49,20 +51,15 @@ router.post('/reply', (req, res) => {
           case ('ROSTER'):
             // TODO: this (currentRoster) should be a model method like nextGame
             reply = `Next game is ${formatGame(nextGame)} \r\n`;
+            // TODO: rethink the design of Game's attendances, maybe it should mirror the structure below
+            const currentRoster = { IN: [], OUT: [], MAYBE: [] };
+            Object.values(nextGame.attendances).forEach((attendance) => {
+              currentRoster[attendance.status].push(attendance.user.name);
+            });
 
-            if (nextGame.bye) {
-              reply = replyText.BYE;
-            } else {
-              // TODO: rethink the design of Game's attendances, maybe it should mirror the structure below
-              const currentRoster = { IN: [], OUT: [], MAYBE: [] };
-              Object.values(nextGame.attendances).forEach((attendance) => {
-                currentRoster[attendance.status].push(attendance.user.name);
-              });
-
-              Object.keys(currentRoster).forEach((status) => {
-                reply += `${status}: ${currentRoster[status].join(', ')} \r\n`;
-              });
-            }
+            Object.keys(currentRoster).forEach((status) => {
+              reply += `${status}: ${currentRoster[status].join(', ')} \r\n`;
+            });
 
             break;
           default:
