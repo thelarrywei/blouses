@@ -97,7 +97,7 @@ const remind = (game) => {
       else return members;
     }, []);
   };
-
+// TODO: fix this check, constantly getting announcments and reminders bc attendance users sentWeeklySMS isn't being updated
   let membersToRemind = (() => {
     switch (true) {
       case (rosterSize < 5):
