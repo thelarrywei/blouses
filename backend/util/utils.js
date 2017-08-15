@@ -77,7 +77,7 @@ const remind = (game) => {
   const attendances = Object.values(game.attendances);
   const isIn = (val) => (val.status === 'IN');
   const notIn = (val) => (['OUT', 'MAYBE'].includes(val.status));
-  const maybe = (val) => (attendance.status === 'MAYBE');
+  const maybe = (val) => (val.status === 'MAYBE');
   const allResponses = (val) => (true);
   const rosterSize = attendances.filter(isIn).length;
   let rosterText = (() => {
@@ -95,6 +95,7 @@ const remind = (game) => {
 
   const findMembers = (filter) => {
     return attendances.reduce((members, attendance) => {
+      // not sure if we need to do this nil/undefined check here but jic
       if (!_.isNil(attendance) && filter(attendance)) return members.concat([attendance.user]);
       else return members;
     }, []);
