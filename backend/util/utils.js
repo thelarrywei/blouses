@@ -1,5 +1,7 @@
 const moment = require('moment-timezone');
 const converter = require('number-to-words');
+const _ = require('lodash');
+
 const { client, twilioNumber } = require('../twilio_config');
 const { validStatuses, replyText, oneWeek, remindDay, announceDay, scheduledTime } = require('./constants');
 const { handleError } = require('./error_handler');
@@ -93,7 +95,7 @@ const remind = (game) => {
 
   const findMembers = (filter) => {
     return attendances.reduce((members, attendance) => {
-      if (filter(attendance)) return members.concat([attendance.user]);
+      if (!_.isNil(attendance) && filter(attendance)) return members.concat([attendance.user]);
       else return members;
     }, []);
   };
