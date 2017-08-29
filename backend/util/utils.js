@@ -83,15 +83,13 @@ const remind = (game) => {
   let rosterText = (() => {
     switch (rosterSize) {
       case 0:
-        return 'have no blouses';
+        return 'we have no blouses showing up this week,';
       case 1:
-        return `only have ${converter.toWords(rosterSize)} blouse`;
+        return `we only have ${converter.toWords(rosterSize)} blouse showing up this week,`;
       default:
-        return `only have ${converter.toWords(rosterSize)} blouses`;
+        return `we only have ${converter.toWords(rosterSize)} blouses showing up this week,`;
     }
   })();
-
-  let gameText = `we ${rosterText} showing up this week, `;
 
   const findMembers = (filter) => {
     return attendances.reduce((members, attendance) => {
@@ -105,16 +103,20 @@ const remind = (game) => {
 
   User.find({ _id: { $nin: responderIds } }, (err, users) => {
     // not sure what happens with users if mongoose returns an error, we want to execute reminder anyways
+    let gameText;
     const nonResponders = users || [];
     let membersToRemind = (() => {
       switch (true) {
         case (rosterSize < 5):
-          gameText += 'can you help us avoid a forfeit?';
+          // NOTE: feels like membersToRemind should only return members and not have side effects like assigning gameText
+          // but the logic governing the assignment and the members are organized together... should be a better way
+          gameText = `${rosterText} can you help us avoid a forfeit?`;
           return nonResponders.concat(findMembers(notIn));
         case (rosterSize === 5):
-          gameText += 'can you help us get a few more on the floor?';
+          gameText = `${rosterText} can you help us get a few more on the floor?`;
           return nonResponders.concat(findMembers(maybe));
         default:
+          gameText = 'I noticed you haven\'t responded yet, can you make it to the game?'
           return nonResponders;
       }
     })();
