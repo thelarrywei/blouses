@@ -115,7 +115,7 @@ const remind = (game) => {
           gameText += 'can you help us get a few more on the floor?';
           return nonResponders.concat(findMembers(maybe));
         default:
-          return [];
+          return nonResponders;
       }
     })();
 
