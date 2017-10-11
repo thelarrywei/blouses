@@ -16,6 +16,9 @@ router.post('/reply', (req, res) => {
   const { Body, From } = req.body;
   const message = Body.trim().toUpperCase();
 
+  // NOTE: if shit starts hitting the fan bring it down
+  return downForMaintenance(From);
+
   User.findOne({ phone: From }, (userErr, user) => {
     handleError(userErr);
     let reply;
@@ -77,5 +80,17 @@ router.post('/reply', (req, res) => {
     });
   });
 });
+
+const downForMaintenance = (to) => {
+  const reply = 'Sorry Blouses Bot is down for maintenance';
+
+  client.messages.create({
+    body: reply,
+    to: to,
+    from: twilioNumber,
+  }).then((response) => {
+    res.status(200).send(response);
+  });
+};
 
 module.exports = router;
